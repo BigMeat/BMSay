@@ -1,0 +1,11 @@
+## Interface: 11302
+## Version: 1.0
+## Title: BMSay
+## Author: AirSars
+## SavedVariables: BMSayDB
+## Notes-zhCN: 包含：打断喊话、上马喊话、全频道喊话
+
+Base.lua
+BMSayCore.lua
+Config.lua
+Command.lua
