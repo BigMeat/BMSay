@@ -1,16 +1,23 @@
 local addonName, addon = ...
 
-setfenv(1, setmetatable(select(2, ...), { __index = function(self,  key) local v = _G[key]; rawset(self, key, v); return v end })) 
+-- setfenv(1, setmetatable(select(2, ...), { __index = function(self,  key) local v = _G[key]; rawset(self, key, v); return v end })) 
 
-addon.frame = CreateFrame('Frame', addonName .. 'Frame')
-addon.frame:Hide()
-addon.panel = CreateFrame('Frame', addonName .. 'Panel')
-addon.panel:Hide()
-addon.scrollFrame = CreateFrame("ScrollFrame", nil, UIParent, "UIPanelScrollFrameTemplate")
-addon.scrollFrame:Hide()
+local BMFrame = CreateFrame('Frame', addonName .. 'Frame')
+BMFrame:Hide()
+
+local BMPanel = CreateFrame('Frame', addonName .. 'Panel')
+BMPanel:Hide()
+
+local BMScrollFrame = CreateFrame("ScrollFrame", nil, UIParent, "UIPanelScrollFrameTemplate")
+BMScrollFrame:Hide()
+
+addon.frame = BMFrame
+addon.panel = BMPanel
+addon.scrollFrame = BMScrollFrame
+
 addon.version = GetAddOnMetadata(addonName, 'Version')
 
-addon.config = {
+BMSayDB = BMSayDB or {
 	horseYellOpen = true,
 	interruptOpen = true,
 	ChannelConfigAry = {horseYell = 'emote',interruptYell = 'yell'},
