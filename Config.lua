@@ -1,17 +1,15 @@
 local addonName, addon = ...
-setfenv(1, select(2, ...)) 
 
-local config = addon.config
 local panel = addon.panel
-local scrollFrame = addon.scrollFrame
+local ascrollFrame = addon.scrollFrame
 --设置面板初始化
 panel:SetSize(500, 1000)
-scrollFrame.ScrollBar:ClearAllPoints()
-scrollFrame.ScrollBar:SetPoint("TOPLEFT", scrollFrame, "TOPRIGHT", -20, -20)
-scrollFrame.ScrollBar:SetPoint("BOTTOMLEFT", scrollFrame, "BOTTOMRIGHT", -20, 20)
-scrollFrame:SetScrollChild(panel)
-scrollFrame.name = addonName
-InterfaceOptions_AddCategory(scrollFrame)
+ascrollFrame.ScrollBar:ClearAllPoints()
+ascrollFrame.ScrollBar:SetPoint("TOPLEFT", ascrollFrame, "TOPRIGHT", -20, -20)
+ascrollFrame.ScrollBar:SetPoint("BOTTOMLEFT", ascrollFrame, "BOTTOMRIGHT", -20, 20)
+ascrollFrame:SetScrollChild(panel)
+ascrollFrame.name = addonName
+InterfaceOptions_AddCategory(ascrollFrame)
 --标题
 local title = panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormalLargeLeft')
 title:SetPoint('TOPLEFT', 16, -16)
@@ -29,22 +27,21 @@ do
 	end
 end
 --设置面板确定函数
-function scrollFrame:ConfigOkay()
+function ascrollFrame:ConfigOkay()
 	for _, control in pairs(panel.controls) do
 		control.SaveValue(control.currentValue)
 	end
-	addon:UpdateConfig(BMSayDB,config)
 	addon:ResetAllSettings()
 end
 --设置面板回到默认设置函数
-function scrollFrame:ConfigDefault()
+function ascrollFrame:ConfigDefault()
 	for _, control in pairs(panel.controls) do
 		control.currentValue = control.defaultValue
 		control.SaveValue(control.currentValue)
 	end
 end
 --设置面板刷新函数
-function scrollFrame:ConfigRefresh()
+function ascrollFrame:ConfigRefresh()
 	for _, control in pairs(panel.controls) do
 		control.currentValue = control.LoadValue()
 		control:UpdateValue()
@@ -189,9 +186,9 @@ function panel:Initialize()
 
 	local horseYellCB = self:CreateCheckBox(
 		'开启上马宏',
-		function () return config.horseYellOpen end,
-		function (v) config.horseYellOpen = v end,
-		config.horseYellOpen)
+		function () return BMSayDB.horseYellOpen end,
+		function (v) BMSayDB.horseYellOpen = v end,
+		BMSayDB.horseYellOpen)
 	horseYellCB:SetPoint('TOPLEFT',horseTitle,"BOTTOMLEFT",0,-20)
 	horseYellCB:SetScript('OnClick', function(self) 
 		self.currentValue = self:GetChecked()
@@ -200,16 +197,16 @@ function panel:Initialize()
 	local horseChannelDD = self:CreateDropDown(
 		'输出频道',
 		{'say','说','yell','大喊','emote','表情'},
-		function() return config.ChannelConfigAry.horseYell end,
-		function(v) config.ChannelConfigAry.horseYell = v end,
-		config.ChannelConfigAry.horseYell)
+		function() return BMSayDB.ChannelConfigAry.horseYell end,
+		function(v) BMSayDB.ChannelConfigAry.horseYell = v end,
+		BMSayDB.ChannelConfigAry.horseYell)
 	horseChannelDD:SetPoint('TOPLEFT',horseYellCB,'BOTTOMLEFT',100,-10)
 
 	local horseText = self:CreateTextView(
 		'内容',
-		function() return config.yellTextAry.horseYell end,
-		function(v) config.yellTextAry.horseYell = v end,
-		config.yellTextAry.horseYell,'TOPLEFT',horseChannelDD,'BOTTOMLEFT',0,-10)
+		function() return BMSayDB.yellTextAry.horseYell end,
+		function(v) BMSayDB.yellTextAry.horseYell = v end,
+		BMSayDB.yellTextAry.horseYell,'TOPLEFT',horseChannelDD,'BOTTOMLEFT',0,-10)
 
 	local btnHoresTextSure = self:CreateButton('确定')
 	btnHoresTextSure:SetWidth(80)
@@ -225,28 +222,28 @@ function panel:Initialize()
 
 	local ruptYellCB = self:CreateCheckBox(
 		'开启打断喊话宏',
-		function () return config.interruptOpen end,
-		function (v) config.interruptOpen = v end,
-		config.interruptOpen)
+		function () return BMSayDB.interruptOpen end,
+		function (v) BMSayDB.interruptOpen = v end,
+		BMSayDB.interruptOpen)
 	ruptYellCB:SetPoint('TOPLEFT',ruptTitle,"BOTTOMLEFT",0,-20)
 	ruptYellCB:SetScript('OnClick', function(self) 
 		self.currentValue = self:GetChecked()
 	end)
-	addon:SetViewToolTip(ruptYellCB,'喊话内容为：前置内容+成功打断了>怪名字<正在施放的【技能名】')
+	-- addon:SetViewToolTip(ruptYellCB,'喊话内容为：前置内容+成功打断了>怪名字<正在施放的【技能名】')
 
 	local ruptChannelDD = self:CreateDropDown(
 		'输出频道',
 		{'say','说','yell','大喊','emote','表情','party','小队','raid','团队'},
-		function() return config.ChannelConfigAry.interruptYell end,
-		function(v) config.ChannelConfigAry.interruptYell = v end,
-		config.ChannelConfigAry.interruptYell)
+		function() return BMSayDB.ChannelConfigAry.interruptYell end,
+		function(v) BMSayDB.ChannelConfigAry.interruptYell = v end,
+		BMSayDB.ChannelConfigAry.interruptYell)
 	ruptChannelDD:SetPoint('TOPLEFT',ruptYellCB,'BOTTOMLEFT',100,-10)
 
 	local ruptText = self:CreateTextView(
 		'前置内容',
-		function() return config.yellTextAry.interruptYell end,
-		function(v) config.yellTextAry.interruptYell = v end,
-		config.yellTextAry.interruptYell,'TOPLEFT',ruptChannelDD,'BOTTOMLEFT',0,-10)
+		function() return BMSayDB.yellTextAry.interruptYell end,
+		function(v) BMSayDB.yellTextAry.interruptYell = v end,
+		BMSayDB.yellTextAry.interruptYell,'TOPLEFT',ruptChannelDD,'BOTTOMLEFT',0,-10)
 
 	local ruptTextSure = self:CreateButton('确定')
 	ruptTextSure:SetWidth(80)
@@ -259,13 +256,7 @@ function panel:Initialize()
 end
 
 --面板初始化
-panel:Initialize()
-panel:Show()
-scrollFrame.okay = scrollFrame.ConfigOkay
-scrollFrame.default = scrollFrame.ConfigDefault
-scrollFrame.refresh = scrollFrame.ConfigRefresh
-scrollFrame:ConfigRefresh()
-scrollFrame:Show()
+
 
 
 

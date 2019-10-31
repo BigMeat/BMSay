@@ -3,9 +3,8 @@
 ## Title: BMSay
 ## Author: AirSars
 ## SavedVariablesPerCharacter: BMSayDB
-## Notes-zhCN: 包含：打断喊话、上马喊话、全频道喊话
+## Notes-zhCN: 包含：打断喊话、上马喊话
 
 Base.lua
 BMSayCore.lua
 Config.lua
-Command.lua

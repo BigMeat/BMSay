@@ -1,81 +1,67 @@
-local addonName, addon = ...
-setfenv(1, select(2, ...)) 
+local addonName,addon = ...
 
-local config = addon.config
-local frame = addon.frame
+local aframe = addon.frame
+local panel = addon.panel
+local ascrollFrame = addon.scrollFrame
 
-function addon:UpdateConfig(dst, src)
-	for k, v in pairs(src) do
-		if type(v) == 'table' then
-			if type(dst[k]) == 'table' then
-				self:UpdateConfig(dst[k], v)
-			else
-				dst[k] = self:UpdateConfig({}, v)
-			end
-		elseif type(dst[k]) ~= 'table' then
-			dst[k] = v
-		end
-	end
-	return dst
-end
-
-frame:SetScript('OnEvent', function(self, event, ...)
+aframe:SetScript('OnEvent', function(self, event, ...)
 	local a = self[event]
 	if a then
 		a(self, ...)
 	end
 end)
 
-function addon:ResetAllSettings()
-	--上马宏开关
-	if config.horseYellOpen then
-		frame:RegisterEvent('UNIT_SPELLCAST_SUCCEEDED')
-	else
-		frame:UnregisterEvent('UNIT_SPELLCAST_SUCCEEDED')
-	end
-
-	if config.interruptOpen then
-		frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED") 
-	else
-		frame:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED") 
-	end
-
-end
-
-frame:RegisterEvent('ADDON_LOADED')
-function frame:ADDON_LOADED(name)
-	if name ~= addonName then return end
-	self:UnregisterEvent('ADDON_LOADED')
-	BMSayDB = BMSayDB or {}
-	addon:UpdateConfig(config, BMSayDB)
-end
-
-frame:RegisterEvent('PLAYER_LOGOUT')
-function frame:PLAYER_LOGOUT()
-	addon:UpdateConfig(BMSayDB, config)
-end
-
-frame:RegisterEvent('PLAYER_ENTERING_WORLD')
-function frame:PLAYER_ENTERING_WORLD(...)
+aframe:RegisterEvent('PLAYER_ENTERING_WORLD')
+function aframe:PLAYER_ENTERING_WORLD(...)
+	BMSayDB = BMSayDB or {
+		horseYellOpen = true,
+		interruptOpen = true,
+		ChannelConfigAry = {horseYell = 'emote',interruptYell = 'yell'},
+		yellTextAry = {horseYell = '翻身一跃,骑上帅气的小马儿...扬长而去...',interruptYell = ''},
+		MountIDList = {}
+	}
+	panel:Initialize()
+	panel:Show()
+	ascrollFrame.okay = ascrollFrame.ConfigOkay
+	ascrollFrame.default = ascrollFrame.ConfigDefault
+	ascrollFrame.refresh = ascrollFrame.ConfigRefresh
+	ascrollFrame:ConfigRefresh()
+	ascrollFrame:Show()
 	addon:ResetAllSettings()
 end
 
-function frame:UNIT_SPELLCAST_SUCCEEDED(arg1,arg2,arg3)
+function addon:ResetAllSettings()
+	--上马宏开关
+	if BMSayDB.horseYellOpen then
+		aframe:RegisterEvent('UNIT_SPELLCAST_SUCCEEDED')
+	else
+		aframe:UnregisterEvent('UNIT_SPELLCAST_SUCCEEDED')
+	end
+
+	if BMSayDB.interruptOpen then
+		aframe:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED") 
+	else
+		aframe:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED") 
+	end
+
+end
+
+function aframe:UNIT_SPELLCAST_SUCCEEDED(arg1,arg2,arg3)
 	if addon:findMountID(arg3) then
-		local channel = addon:getChannel(config.ChannelConfigAry.horseYell)
+		local channel = addon:getChannel(BMSayDB.ChannelConfigAry.horseYell)
 		if channel then
-			SendChatMessage(config.yellTextAry.horseYell,channel)
+			SendChatMessage(BMSayDB.yellTextAry.horseYell,channel)
 		end
 	end
 end
 
-function frame:COMBAT_LOG_EVENT_UNFILTERED()
+function aframe:COMBAT_LOG_EVENT_UNFILTERED()
 	local _, subEvent, _, sourceGUID, sourceName, _, _, destGUID, destName = CombatLogGetCurrentEventInfo() 
 	if(subEvent == "SPELL_INTERRUPT" and sourceGUID == UnitGUID("player")) then 
 		local spellId, spellName, spellSchool, extraSpellId, extraSpellName, extraSchool = select(12, CombatLogGetCurrentEventInfo())
-		local channel = addon:getChannel(config.ChannelConfigAry.interruptYell)
+		local channel = addon:getChannel(BMSayDB.ChannelConfigAry.interruptYell)
 		if channel then
-			SendChatMessage(config.yellTextAry.interruptYell.."成功打断了>"..destName.."<正在施放的【"..extraSpellName.."】", channel) 
+			SendChatMessage(BMSayDB.yellTextAry.interruptYell.."成功打断了>"..destName.."<正在施放的【"..extraSpellName.."】", channel) 
 		end
 	end
 end
