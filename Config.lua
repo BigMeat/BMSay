@@ -145,6 +145,7 @@ function panel:CreateTextView(headTitle, LoadValue, SaveValue, defaultValue,self
 	editbox:SetPoint("TOP", 0, -12)
 	editbox:SetPoint("BOTTOM", f, "BOTTOM", 0, 12)
 	editbox:SetFontObject("ChatFontNormal")
+	editbox:SetMaxLetters(255)
 
 	editbox.LoadValue = LoadValue
 	editbox.SaveValue = SaveValue
