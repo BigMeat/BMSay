@@ -2,6 +2,7 @@ local addonName, addon = ...
 
 local panel = addon.panel
 local ascrollFrame = addon.scrollFrame
+
 --设置面板初始化
 panel:SetSize(500, 1000)
 ascrollFrame.ScrollBar:ClearAllPoints()
@@ -10,6 +11,7 @@ ascrollFrame.ScrollBar:SetPoint("BOTTOMLEFT", ascrollFrame, "BOTTOMRIGHT", -20, 
 ascrollFrame:SetScrollChild(panel)
 ascrollFrame.name = addonName
 InterfaceOptions_AddCategory(ascrollFrame)
+
 --标题
 local title = panel:CreateFontString(nil, 'ARTWORK', 'GameFontNormalLargeLeft')
 title:SetPoint('TOPLEFT', 16, -16)
@@ -145,6 +147,7 @@ function panel:CreateTextView(headTitle, LoadValue, SaveValue, defaultValue,self
 	editbox:SetPoint("TOP", 0, -12)
 	editbox:SetPoint("BOTTOM", f, "BOTTOM", 0, 12)
 	editbox:SetFontObject("ChatFontNormal")
+	editbox:SetMaxLetters(255)
 
 	editbox.LoadValue = LoadValue
 	editbox.SaveValue = SaveValue
@@ -229,7 +232,6 @@ function panel:Initialize()
 	ruptYellCB:SetScript('OnClick', function(self) 
 		self.currentValue = self:GetChecked()
 	end)
-	-- addon:SetViewToolTip(ruptYellCB,'喊话内容为：前置内容+成功打断了>怪名字<正在施放的【技能名】')
 
 	local ruptChannelDD = self:CreateDropDown(
 		'输出频道',

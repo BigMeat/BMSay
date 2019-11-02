@@ -8,3 +8,4 @@
 Base.lua
 BMSayCore.lua
 Config.lua
+Command.lua

@@ -1,16 +1,12 @@
 local addonName, addon = ...
-setfenv(1, select(2, ...)) 
-
-local config = addon.config
-local L = addon.language
 
 SLASH_BMS1 = '/bms'
 SLASH_BMS2 = '/BMS'
 SlashCmdList['BMS'] = function(msg)
-    local command = msg:lower()
-    if command then
-    	
+    local command = msg:lower():match("^(%S*)%s*(.-)$")
+    if command:len() > 1 then
+
     else
-		InterfaceOptionsFrame_OpenToCategory("BMSay")
+		InterfaceOptionsFrame_OpenToCategory(addonName)
 	end
 end

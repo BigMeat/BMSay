@@ -30,6 +30,49 @@ function aframe:PLAYER_ENTERING_WORLD(...)
 	addon:ResetAllSettings()
 end
 
+-- 判断val是否在t里
+function addon:IsInArray(t, val)
+	for _, v in ipairs(t) do
+		if v == val then
+			return true
+		end
+	end
+	return false
+end
+
+function addon:findMountID(mountID)
+	--先判断之前用过的
+	if addon:IsInArray(BMSayDB.MountIDList,mountID) then
+		return true
+	elseif addon:IsInArray(addon.MountIDList,mountID) then
+		if not addon:IsInArray(BMSayDB.MountIDList,mountID) then
+			table.insert(BMSayDB.MountIDList,mountID)
+		end
+		return true
+	end
+	return false
+end
+
+function addon:getChannel(type)
+	local channel
+	if type == 'emote' then
+		channel = 'emote'
+	elseif type == 'say' then
+		channel = 'say'
+	elseif type == 'yell' then
+		channel = 'yell'
+	elseif type == 'party' then
+		if IsInGroup() then
+			channel = 'party'
+		end
+	elseif type == 'raid' then
+		if IsInRaid() then
+			channel = 'raid'
+		end
+	end
+	return channel
+end
+
 function addon:ResetAllSettings()
 	--上马宏开关
 	if BMSayDB.horseYellOpen then
@@ -47,7 +90,7 @@ function addon:ResetAllSettings()
 end
 
 function aframe:UNIT_SPELLCAST_SUCCEEDED(arg1,arg2,arg3)
-	if addon:findMountID(arg3) then
+	if arg1 == 'player' and addon:findMountID(arg3) then
 		local channel = addon:getChannel(BMSayDB.ChannelConfigAry.horseYell)
 		if channel then
 			SendChatMessage(BMSayDB.yellTextAry.horseYell,channel)
